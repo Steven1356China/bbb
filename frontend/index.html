@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProgramJudge - 编程评测系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/editor/editor.main.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-code"></i>
+                    <span>ProgramJudge</span>
+                </div>
+                
+                <div class="nav-menu">
+                    <a href="#home" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>首页</span>
+                    </a>
+                    <a href="#problems" class="nav-link">
+                        <i class="fas fa-list-ol"></i>
+                        <span>题库</span>
+                    </a>
+                    <a href="#contests" class="nav-link">
+                        <i class="fas fa-trophy"></i>
+                        <span>比赛</span>
+                    </a>
+                    <a href="#discuss" class="nav-link">
+                        <i class="fas fa-comments"></i>
+                        <span>讨论</span>
+                    </a>
+                </div>
+                
+                <div class="nav-user" id="userSection">
+                    <!-- 登录前显示 -->
+                    <div id="loginSection">
+                        <button class="btn btn-outline" onclick="showLoginModal()">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>登录</span>
+                        </button>
+                        <button class="btn btn-primary ml-2" onclick="showRegisterModal()">
+                            <i class="fas fa-user-plus"></i>
+                            <span>注册</span>
+                        </button>
+                    </div>
+                    <!-- 登录后显示 -->
+                    <div id="userInfo" class="hidden">
+                        <div class="user-dropdown">
+                            <img src="https://ui-avatars.com/api/?name=用户&background=3b82f6&color=fff" 
+                                 alt="头像" class="user-avatar">
+                            <span id="username" class="ml-2">用户</span>
+                            <i class="fas fa-chevron-down ml-2"></i>
+                            <div class="dropdown-menu">
+                                <a href="#profile" class="dropdown-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>个人中心</span>
+                                </a>
+                                <a href="#admin" class="dropdown-item admin-only">
+                                    <i class="fas fa-cog"></i>
+                                    <span>管理后台</span>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" class="dropdown-item text-danger" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>退出登录</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 公告区 -->
+            <section class="announcement" id="announcement">
+                <div class="announcement-header">
+                    <i class="fas fa-bullhorn"></i>
+                    <h3>公告</h3>
+                </div>
+                <div class="announcement-content">
+                    <div class="announcement-item">
+                        <div class="announcement-title">🎉 欢迎使用 ProgramJudge!</div>
+                        <div class="announcement-text">这是一个开源的编程评测平台，支持C++和Python语言评测</div>
+                        <div class="announcement-time">2024-01-01</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 首页内容 -->
+            <section class="home-section" id="home">
+                <div class="welcome-card">
+                    <h1>欢迎来到 ProgramJudge</h1>
+                    <p>一个功能完整的在线编程评测系统</p>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <i class="fas fa-code"></i>
+                            <h3>多语言支持</h3>
+                            <p>支持C++和Python语言，更多语言持续添加中</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-shield-alt"></i>
+                            <h3>安全评测</h3>
+                            <p>基于Docker沙箱的安全评测环境</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-users"></i>
+                            <h3>社区题库</h3>
+                            <p>用户贡献题目，共同构建题库</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-trophy"></i>
+                            <h3>比赛系统</h3>
+                            <p>支持在线比赛，实时排名</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 题库页面 -->
+            <section class="problems-section hidden" id="problems">
+                <div class="section-header">
+                    <h2>题库</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" id="createProblemBtn" onclick="showCreateProblemModal()">
+                            <i class="fas fa-plus"></i>
+                            <span>创建题目</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="problems-filters">
+                    <div class="filter-group">
+                        <input type="text" id="searchInput" class="filter-input" placeholder="搜索题目...">
+                        <select id="difficultyFilter" class="filter-select">
+                            <option value="">全部难度</option>
+                            <option value="easy">简单</option>
+                            <option value="medium">中等</option>
+                            <option value="hard">困难</option>
+                        </select>
+                        <select id="tagFilter" class="filter-select">
+                            <option value="">全部标签</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="loadProblems()">
+                            <i class="fas fa-search"></i>
+                            <span>搜索</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="problems-list" id="problemsList">
+                    <!-- 题目列表将通过JS动态加载 -->
+                </div>
+            </section>
+
+            <!-- 个人中心 -->
+            <section class="profile-section hidden" id="profile">
+                <div class="profile-header">
+                    <img src="https://ui-avatars.com/api/?name=Steven1356China&background=3b82f6&color=fff&size=100" 
+                         alt="头像" class="profile-avatar">
+                    <div class="profile-info">
+                        <h2 id="profileUsername">Steven1356China</h2>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalSolved">0</div>
+                                <div class="stat-label">已解决</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalSubmissions">0</div>
+                                <div class="stat-label">提交</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="userScore">0</div>
+                                <div class="stat-label">积分</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('submissions')">提交记录</button>
+                    <button class="tab-btn" onclick="switchTab('problems')">创建题目</button>
+                    <button class="tab-btn" onclick="switchTab('contests')">参加比赛</button>
+                </div>
+                
+                <div class="tab-content">
+                    <div id="submissionsTab" class="tab-pane active">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>题目</th>
+                                    <th>语言</th>
+                                    <th>状态</th>
+                                    <th>分数</th>
+                                    <th>时间</th>
+                                </tr>
+                            </thead>
+                            <tbody id="submissionsTable">
+                                <!-- 提交记录通过JS加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 题目详情页 -->
+            <section class="problem-detail hidden" id="problemDetail">
+                <!-- 通过JS动态加载 -->
+            </section>
+        </main>
+
+        <!-- 模态框容器 -->
+        <div id="modalContainer"></div>
+
+        <!-- 代码编辑器容器（隐藏） -->
+        <div id="editorContainer" class="hidden"></div>
+    </div>
+
+    <!-- Monaco Editor CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
